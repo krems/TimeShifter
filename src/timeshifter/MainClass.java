@@ -27,13 +27,13 @@ public class MainClass {
     public static void premain(String args, Instrumentation inst)
             throws Exception {
         if (args != null && args.length() > 0) {
-            log.info("Using dateshift.txt path from args: {}", args);
+            log.info("Using {} config from args", args);
             FILE = new File(args);
         } else {
+            log.error("No arguments provided!");
             return;
         }
 
-        log.info("TimeShifter agent started");
         inst.addTransformer(new Transformer());
         log.info("Transformer added");
 
@@ -116,6 +116,11 @@ public class MainClass {
                 if (initializer != null) {
                     initializer.instrument(cc);
                 }
+//                CtClass[] innerClasses = clazz.getNestedClasses();
+//                for (CtClass inner : innerClasses) {
+//                    transform(loader, inner.getName(), inner.getClass(),
+//                            protectionDomain, inner.toBytecode());
+//                }
                 // todo: inner classes?
 
                 classfileBuffer = clazz.toBytecode();
@@ -127,11 +132,6 @@ public class MainClass {
         }
 
         private static boolean needToBeTransformed(String className) {
-//            return (className.startsWith("com/netcracker")
-//                    || className.startsWith("jsp_servlet"))
-//                    && !className.contains("/boiler/")
-//                    && !className.contains("/_boiler/")
-//                    && !className.contains("timeshifter");
             return !className.contains("timeshifter");
         }
     }
