@@ -34,6 +34,7 @@ public class MainClass {
             return;
         }
 
+        Class.forName("timeshifter.ShiftedTimeSystem");
         inst.addTransformer(new Transformer());
         log.info("Transformer added");
 
