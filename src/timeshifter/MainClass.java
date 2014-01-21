@@ -35,10 +35,10 @@ public class MainClass {
 
         log.info("TimeShifter agent started");
         inst.addTransformer(new Transformer());
-        log.debug("Transformer added");
+        log.info("Transformer added");
 
         Class<?>[] loadedClasses = inst.getAllLoadedClasses();
-        log.debug("Already loaded {} classes", loadedClasses.length);
+        log.info("Already loaded {} classes", loadedClasses.length);
         ArrayList<Class<?>> classList = new ArrayList<>(loadedClasses.length);
         for (Class<?> loadedClass : loadedClasses) {
             if (inst.isModifiableClass(loadedClass)) {
@@ -113,10 +113,13 @@ public class MainClass {
                     method.instrument(cc);
                 }
                 CtConstructor initializer = clazz.getClassInitializer();
-                initializer.instrument(cc);
+                if (initializer != null) {
+                    initializer.instrument(cc);
+                }
                 // todo: inner classes?
 
                 classfileBuffer = clazz.toBytecode();
+                log.debug("Transformed class: {}", clazz.getName());
             } catch (Exception e) {
                 log.error("Couldn't replace System.currentTimeMillis(): ", e);
             }
@@ -124,11 +127,12 @@ public class MainClass {
         }
 
         private static boolean needToBeTransformed(String className) {
-            return (className.startsWith("com/netcracker")
-                    || className.startsWith("jsp_servlet"))
-                    && !className.contains("/boiler/")
-                    && !className.contains("/_boiler/")
-                    && !className.contains("timeshifter");
+//            return (className.startsWith("com/netcracker")
+//                    || className.startsWith("jsp_servlet"))
+//                    && !className.contains("/boiler/")
+//                    && !className.contains("/_boiler/")
+//                    && !className.contains("timeshifter");
+            return !className.contains("timeshifter");
         }
     }
 }
