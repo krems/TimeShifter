@@ -48,7 +48,7 @@ public class ShiftExtractor {
     }
 
     private static long readShiftFromFile() {
-        log.info("Reading data from file '{}'",
+        log.info("Reading data from file {}",
                 MainClass.FILE.getAbsolutePath());
         long shift = 0;
         BufferedReader dateFile = null;
@@ -59,7 +59,7 @@ public class ShiftExtractor {
 
                 try {
                     Date date = DATE_FORMAT.get().parse(dateLine);
-                    log.info("Loaded date from file: '{}'", date);
+                    log.info("Loaded date from file: {}", date);
                     Calendar c = Calendar.getInstance();
                     c.setTime(date);
                     Calendar now = Calendar.getInstance();

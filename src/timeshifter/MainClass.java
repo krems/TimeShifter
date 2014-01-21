@@ -27,14 +27,14 @@ public class MainClass {
     public static void premain(String args, Instrumentation inst)
             throws Exception {
         if (args != null && args.length() > 0) {
-            log.info("Using dateshift.txt path from args: '{}'", args);
+            log.info("Using dateshift.txt path from args: {}", args);
             FILE = new File(args);
         } else {
             return;
         }
 
         log.info("TimeShifter agent started");
-        inst.addTransformer(new Transformer(), true);
+        inst.addTransformer(new Transformer());
         log.debug("Transformer added");
 
         Class<?>[] loadedClasses = inst.getAllLoadedClasses();
@@ -47,11 +47,15 @@ public class MainClass {
         }
 
         // Reload classes, if possible.
+        Class<?>[] toRetransform = new Class<?>[classList.size()];
+        classList.toArray(toRetransform);
         try {
-            inst.retransformClasses((Class<?>[])classList.toArray());
+            inst.retransformClasses(toRetransform);
         } catch (UnmodifiableClassException e) {
             log.warn("AllocationInstrumenter was unable to retransform " +
                     "early loaded classes.");
+        } catch (UnsupportedOperationException e) {
+            log.warn("Retransform is not supported on current jvm", e);
         }
     }
 
