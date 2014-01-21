@@ -63,10 +63,6 @@ public class ShiftExtractor {
                     Calendar c = Calendar.getInstance();
                     c.setTime(date);
                     Calendar now = Calendar.getInstance();
-//                    long offset = c.get(Calendar.ZONE_OFFSET) +
-                            c.get(Calendar.DST_OFFSET);
-//                    log.info("Offset: {}", offset);
-//                    res += offset;
                     shift = c.getTime().getTime() - now.getTime().getTime();
                 } catch (ParseException e) {
                     log.error("ParseException: ", e);
