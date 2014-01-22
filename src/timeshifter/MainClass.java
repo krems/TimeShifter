@@ -1,8 +1,8 @@
 package timeshifter;
 
 import javassist.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -21,24 +21,24 @@ public class MainClass {
     public static volatile File FILE;
     public static final String FORMAT = "dd.MM.yyyy HH:mm:ss";
 
-    private final static Logger log =
-            LoggerFactory.getLogger(MainClass.class);
+//    private final static Logger log =
+//            LoggerFactory.getLogger(MainClass.class);
 
     public static void premain(String args, Instrumentation inst)
             throws Exception {
         if (args != null && args.length() > 0) {
-            log.info("Using {} config from args", args);
+//            log.info("Using {} config from args", args);
             FILE = new File(args);
         } else {
-            log.error("No arguments provided!");
+//            log.error("No arguments provided!");
             return;
         }
 
         inst.addTransformer(new Transformer());
-        log.info("Transformer added");
+//        log.info("Transformer added");
 
         Class<?>[] loadedClasses = inst.getAllLoadedClasses();
-        log.info("Already loaded {} classes", loadedClasses.length);
+//        log.info("Already loaded {} classes", loadedClasses.length);
         ArrayList<Class<?>> classList = new ArrayList<>(loadedClasses.length);
         for (Class<?> loadedClass : loadedClasses) {
             if (inst.isModifiableClass(loadedClass)) {
@@ -52,10 +52,10 @@ public class MainClass {
         try {
             inst.retransformClasses(toRetransform);
         } catch (UnmodifiableClassException e) {
-            log.warn("AllocationInstrumenter was unable to retransform " +
-                    "early loaded classes.");
+//            log.warn("AllocationInstrumenter was unable to retransform " +
+//                    "early loaded classes.");
         } catch (UnsupportedOperationException e) {
-            log.warn("Retransform is not supported on current jvm", e);
+//            log.warn("Retransform is not supported on current jvm", e);
         }
     }
 
@@ -71,7 +71,7 @@ public class MainClass {
      */
     public static void agentmain(String args, Instrumentation inst)
             throws Exception {
-        log.info("agentmain called");
+//        log.info("agentmain called");
         premain(args, inst);
     }
 
@@ -124,9 +124,9 @@ public class MainClass {
                 // todo: inner classes?
 
                 classfileBuffer = clazz.toBytecode();
-                log.debug("Transformed class: {}", clazz.getName());
+//                log.debug("Transformed class: {}", clazz.getName());
             } catch (Exception e) {
-                log.error("Couldn't replace System.currentTimeMillis(): ", e);
+//                log.error("Couldn't replace System.currentTimeMillis(): ", e);
             }
             return classfileBuffer;
         }

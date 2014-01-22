@@ -1,7 +1,7 @@
 package timeshifter;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -16,8 +16,8 @@ public class ShiftExtractor {
 
     private static volatile long lastModified = 0;
     private static volatile long timeShift = 0;
-    private static final Logger log =
-            LoggerFactory.getLogger(ShiftExtractor.class);
+//    private static final Logger log =
+//            LoggerFactory.getLogger(ShiftExtractor.class);
     private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT =
             new ThreadLocal<SimpleDateFormat>() {
                 @Override
@@ -48,8 +48,8 @@ public class ShiftExtractor {
     }
 
     private static long readShiftFromFile() {
-        log.info("Reading data from file {}",
-                MainClass.FILE.getAbsolutePath());
+//        log.info("Reading data from file {}",
+//                MainClass.FILE.getAbsolutePath());
         long shift = 0;
         BufferedReader dateFile = null;
         try {
@@ -59,25 +59,25 @@ public class ShiftExtractor {
 
                 try {
                     Date date = DATE_FORMAT.get().parse(dateLine);
-                    log.info("Loaded date from file: {}", date);
+//                    log.info("Loaded date from file: {}", date);
                     Calendar c = Calendar.getInstance();
                     c.setTime(date);
                     Calendar now = Calendar.getInstance();
                     shift = c.getTime().getTime() - now.getTime().getTime();
                 } catch (ParseException e) {
-                    log.error("ParseException: ", e);
+//                    log.error("ParseException: ", e);
                 }
             } else {
-                log.error("File is empty");
+//                log.error("File is empty");
             }
         } catch (IOException e) {
-            log.error("File read error: ", e);
+//            log.error("File read error: ", e);
         } finally {
             if (dateFile != null) {
                 try {
                     dateFile.close();
                 } catch (IOException e) {
-                    log.error("File Closing Error: ", e);
+//                    log.error("File Closing Error: ", e);
                 }
             }
         }
