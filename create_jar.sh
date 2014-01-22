@@ -9,4 +9,4 @@ jar -cvmf MANIFEST.MF timeshifter.jar ./timeshifter/*
 mv timeshifter.jar ../timeshifter.jar
 cd ..
 touch new_date.config
-echo "25.12.2066" > new_date.config
+echo "25.12.2066 00:00:00" > new_date.config
