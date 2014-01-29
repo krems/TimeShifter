@@ -1,9 +1,12 @@
 1. Upload timeshifter.zip to application home directory
+
 2. Execute:
         unzip -oq timeshifter.zip
+
 3. Add 
         -Xbootclasspath/p:timeshifter/timeshifter.jar:timeshifter/lib/javassist.jar -javaagent:timeshifter/timeshifter.jar=timeshifter/new_date.conf
-option to jvm arguments
+option to jvm arguments (it MUST be the first javaagent in jvm arguments)
+
 4. To change current date set wishful date and time in 
         timeshifter/new_date.conf 
 file. Date/Time format is "dd:mm:yyyy HH24:mm:ss"

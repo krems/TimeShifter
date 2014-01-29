@@ -20,6 +20,7 @@ public class MainClass {
 
     public static volatile File FILE;
     public static final String FORMAT = "dd.MM.yyyy HH:mm:ss";
+    public static boolean verbose;
 
 //    private final static Logger log =
 //            LoggerFactory.getLogger(MainClass.class);
@@ -42,7 +43,10 @@ public class MainClass {
 
         Class<?>[] loadedClasses = inst.getAllLoadedClasses();
 //        log.info("Already loaded {} classes", loadedClasses.length);
-        System.out.println("Already loaded " + loadedClasses.length + " classes");
+        if (verbose) {
+            System.out.println("Already loaded " + loadedClasses.length +
+                    " classes");
+        }
         ArrayList<Class<?>> classList = new ArrayList<>(loadedClasses.length);
         for (Class<?> loadedClass : loadedClasses) {
             if (inst.isModifiableClass(loadedClass)) {
@@ -58,7 +62,8 @@ public class MainClass {
         } catch (UnmodifiableClassException e) {
 //            log.warn("AllocationInstrumenter was unable to retransform " +
 //                    "early loaded classes.");
-            System.out.println("AllocationInstrumenter was unable to retransform early loaded classes.");
+            System.out.println("AllocationInstrumenter was unable to " +
+                    "retransform early loaded classes.");
         } catch (UnsupportedOperationException e) {
 //            log.warn("Retransform is not supported on current jvm", e);
             System.out.println("Retransform is not supported on current jvm");
@@ -133,7 +138,9 @@ public class MainClass {
 
                 classfileBuffer = clazz.toBytecode();
 //                log.debug("Transformed class: {}", clazz.getName());
-                System.out.println("Transformed class: " + clazz.getName());
+                if (verbose) {
+                    System.out.println("Transformed class: " + clazz.getName());
+                }
             } catch (Exception e) {
 //                log.error("Couldn't replace System.currentTimeMillis(): ", e);
                 System.out.println("Couldn't replace System.currentTimeMillis(): ");

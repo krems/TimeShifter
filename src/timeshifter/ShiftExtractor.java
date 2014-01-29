@@ -29,7 +29,9 @@ public class ShiftExtractor {
     public static long getShift() {
         if ((lastModified > 0 && !MainClass.FILE.exists()) ||
                 lastModified < MainClass.FILE.lastModified()) {
-            System.out.println("File modification detected");
+            if (MainClass.verbose) {
+                System.out.println("File modification detected");
+            }
             synchronized (MainClass.FILE) {
                 if (MainClass.FILE.exists()) {
                     lastModified = MainClass.FILE.lastModified();
@@ -50,7 +52,10 @@ public class ShiftExtractor {
     private static long readShiftFromFile() {
 //        log.info("Reading data from file {}",
 //                MainClass.FILE.getAbsolutePath());
-        System.out.println("Reading data from file " + MainClass.FILE.getAbsolutePath());
+        if (MainClass.verbose) {
+            System.out.println("Reading data from file " +
+                    MainClass.FILE.getAbsolutePath());
+        }
         long shift = 0;
         BufferedReader dateFile = null;
         try {
@@ -61,7 +66,9 @@ public class ShiftExtractor {
                 try {
                     Date date = DATE_FORMAT.get().parse(dateLine);
 //                    log.info("Loaded date from file: {}", date);
-                    System.out.println("Reading data from file " + date);
+                    if (MainClass.verbose) {
+                        System.out.println("Reading data from file " + date);
+                    }
                     Calendar c = Calendar.getInstance();
                     c.setTime(date);
                     Calendar now = Calendar.getInstance();
