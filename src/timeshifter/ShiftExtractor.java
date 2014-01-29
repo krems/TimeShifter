@@ -30,8 +30,8 @@ public class ShiftExtractor {
         if ((lastModified > 0 && !MainClass.CONF_FILE.exists()) ||
                 lastModified < MainClass.CONF_FILE.lastModified()) {
             synchronized (MainClass.CONF_FILE) {
-                if (((lastModified > 0 && !MainClass.CONF_FILE.exists()) ||
-                          lastModified < MainClass.CONF_FILE.lastModified())) {
+                if (lastModified > 0 && MainClass.CONF_FILE.exists() &&
+                          lastModified == MainClass.CONF_FILE.lastModified()) {
                     return timeShift;
                 }
                 if (MainClass.verbose) {
