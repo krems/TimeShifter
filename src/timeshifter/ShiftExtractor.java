@@ -27,11 +27,11 @@ public class ShiftExtractor {
             };
 
     public static long getShift() {
-        if ((lastModified > 0 && !MainClass.FILE.exists()) ||
-                lastModified < MainClass.FILE.lastModified()) {
-            synchronized (MainClass.FILE) {
-                if (((lastModified > 0 && !MainClass.FILE.exists()) ||
-                            lastModified < MainClass.FILE.lastModified())) {
+        if ((lastModified > 0 && !MainClass.CONF_FILE.exists()) ||
+                lastModified < MainClass.CONF_FILE.lastModified()) {
+            synchronized (MainClass.CONF_FILE) {
+                if (((lastModified > 0 && !MainClass.CONF_FILE.exists()) ||
+                          lastModified < MainClass.CONF_FILE.lastModified())) {
                     return timeShift;
                 }
                 if (MainClass.verbose) {
@@ -39,8 +39,8 @@ public class ShiftExtractor {
                     System.out.println(
                            "Timeshifter: File modification detected");
                 }
-                if (MainClass.FILE.exists()) {
-                    lastModified = MainClass.FILE.lastModified();
+                if (MainClass.CONF_FILE.exists()) {
+                    lastModified = MainClass.CONF_FILE.lastModified();
 
                     long newTime = readShiftFromFile();
                     if (newTime > 0) {
@@ -57,15 +57,15 @@ public class ShiftExtractor {
 
     private static long readShiftFromFile() {
 //        log.info("Reading data from file {}",
-//                MainClass.FILE.getAbsolutePath());
+//                MainClass.CONF_FILE.getAbsolutePath());
         if (MainClass.verbose) {
             System.out.println("Timeshifter: Reading data from file " +
-                    MainClass.FILE.getAbsolutePath());
+                    MainClass.CONF_FILE.getAbsolutePath());
         }
         long shift = 0;
         BufferedReader dateFile = null;
         try {
-            dateFile = new BufferedReader(new FileReader(MainClass.FILE));
+            dateFile = new BufferedReader(new FileReader(MainClass.CONF_FILE));
             String dateLine = dateFile.readLine();
             if (dateLine != null && !dateLine.trim().isEmpty()) {
 
@@ -76,10 +76,11 @@ public class ShiftExtractor {
                         System.out.println(
                                 "Timeshifter: Reading data from file " + date);
                     }
-                    Calendar c = Calendar.getInstance();
-                    c.setTime(date);
+                    Calendar dateCal = Calendar.getInstance();
+                    dateCal.setTime(date);
                     Calendar now = Calendar.getInstance();
-                    shift = c.getTime().getTime() - now.getTime().getTime();
+                    shift = dateCal.getTime().getTime() -
+                            now.getTime().getTime();
                 } catch (ParseException e) {
 //                    log.error("ParseException: ", e);
                     System.out.println("Timeshifter: ParseException: ");

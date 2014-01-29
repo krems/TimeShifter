@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 public class MainClass {
 
-    public static volatile File FILE;
+    public static volatile File CONF_FILE;
     public static final String FORMAT = "dd.MM.yyyy HH:mm:ss";
     public static boolean verbose = true;
 
@@ -30,7 +30,7 @@ public class MainClass {
         if (args != null && args.length() > 0) {
 //            log.info("Using {} config from args", args);
             System.out.println("Timeshifter: Using config from args" + args);
-            FILE = new File(args);
+            CONF_FILE = new File(args);
         } else {
 //            log.error("No arguments provided!");
             System.out.println("Timeshifter: No arguments provided!");
@@ -94,7 +94,7 @@ public class MainClass {
     private static class Transformer implements ClassFileTransformer {
 
         private static final ClassPool pool = ClassPool.getDefault();
-        private static volatile CodeConverter cc;
+        private static volatile CodeConverter codeConverter;
         private static volatile boolean ccInitialized;
 
         @Override
@@ -135,15 +135,15 @@ public class MainClass {
                 throws CannotCompileException {
             CtConstructor[] constructors = clazz.getConstructors();
             for (CtConstructor constructor : constructors) {
-                constructor.instrument(cc);
+                constructor.instrument(codeConverter);
             }
             CtMethod[] methods = clazz.getDeclaredMethods();
             for (CtMethod method : methods) {
-                method.instrument(cc);
+                method.instrument(codeConverter);
             }
             CtConstructor initializer = clazz.getClassInitializer();
             if (initializer != null) {
-                initializer.instrument(cc);
+                initializer.instrument(codeConverter);
             }
 //                CtClass[] innerClasses = clazz.getNestedClasses();
 //                for (CtClass inner : innerClasses) {
@@ -172,8 +172,9 @@ public class MainClass {
                     CtMethod myCurrentTime =
                             mySystem.getDeclaredMethod("currentTimeMillis");
 
-                    cc = new CodeConverter();
-                    cc.redirectMethodCall(jCurrentTime, myCurrentTime);
+                    codeConverter = new CodeConverter();
+                    codeConverter.redirectMethodCall(jCurrentTime,
+                            myCurrentTime);
                     ccInitialized = true;
                 }
             }
