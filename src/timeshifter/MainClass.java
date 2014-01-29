@@ -154,7 +154,7 @@ public class MainClass {
         }
 
         private static boolean needToBeTransformed(String className) {
-            return !className.contains("Timeshifter: timeshifter");
+            return !className.contains("timeshifter");
         }
 
         private static void initCodeConverter()
