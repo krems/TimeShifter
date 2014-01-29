@@ -20,7 +20,7 @@ public class MainClass {
 
     public static volatile File FILE;
     public static final String FORMAT = "dd.MM.yyyy HH:mm:ss";
-    public static boolean verbose;
+    public static boolean verbose = true;
 
 //    private final static Logger log =
 //            LoggerFactory.getLogger(MainClass.class);
@@ -41,6 +41,10 @@ public class MainClass {
 //        log.info("Transformer added");
         System.out.println("Timeshifter: Transformer added");
 
+        tryToReload(inst);
+    }
+
+    private static void tryToReload(Instrumentation inst) {
         Class<?>[] loadedClasses = inst.getAllLoadedClasses();
 //        log.info("Already loaded {} classes", loadedClasses.length);
         if (verbose) {
@@ -53,8 +57,6 @@ public class MainClass {
                 classList.add(loadedClass);
             }
         }
-
-        // Reload classes, if possible.
         Class<?>[] toRetransform = new Class<?>[classList.size()];
         classList.toArray(toRetransform);
         try {
@@ -90,6 +92,11 @@ public class MainClass {
     }
 
     private static class Transformer implements ClassFileTransformer {
+
+        private static final ClassPool pool = ClassPool.getDefault();
+        private static volatile CodeConverter cc;
+        private static volatile boolean ccInitialized;
+
         @Override
         public byte[] transform(ClassLoader loader,
                                 String className,
@@ -101,42 +108,14 @@ public class MainClass {
                 return null;
             }
             try {
-                ClassPool pool = ClassPool.getDefault();
-
-                CtClass jSystem = pool.get("java.lang.System");
-                CtMethod jCurrentTime =
-                        jSystem.getDeclaredMethod("currentTimeMillis");
-                CtClass mySystem = pool.get("timeshifter.ShiftedTimeSystem");
-                CtMethod myCurrentTime =
-                        mySystem.getDeclaredMethod("currentTimeMillis");
-
-                CodeConverter cc = new CodeConverter();
-                cc.redirectMethodCall(jCurrentTime, myCurrentTime);
+                initCodeConverter();
 
                 CtClass clazz = pool.makeClass(
                         new ByteArrayInputStream(classfileBuffer), false);
                 if (clazz.isFrozen()) {
                     return null;
                 }
-                CtConstructor[] constructors = clazz.getConstructors();
-                for (CtConstructor constructor : constructors) {
-                    constructor.instrument(cc);
-                }
-                CtMethod[] methods = clazz.getDeclaredMethods();
-                for (CtMethod method : methods) {
-                    method.instrument(cc);
-                }
-                CtConstructor initializer = clazz.getClassInitializer();
-                if (initializer != null) {
-                    initializer.instrument(cc);
-                }
-//                CtClass[] innerClasses = clazz.getNestedClasses();
-//                for (CtClass inner : innerClasses) {
-//                    transform(loader, inner.getName(), inner.getClass(),
-//                            protectionDomain, inner.toBytecode());
-//                }
-                // todo: inner classes?
-
+                instrumentClass(clazz);
                 classfileBuffer = clazz.toBytecode();
 //                log.debug("Transformed class: {}", clazz.getName());
                 if (verbose) {
@@ -152,8 +131,52 @@ public class MainClass {
             return classfileBuffer;
         }
 
+        private static void instrumentClass(CtClass clazz)
+                throws CannotCompileException {
+            CtConstructor[] constructors = clazz.getConstructors();
+            for (CtConstructor constructor : constructors) {
+                constructor.instrument(cc);
+            }
+            CtMethod[] methods = clazz.getDeclaredMethods();
+            for (CtMethod method : methods) {
+                method.instrument(cc);
+            }
+            CtConstructor initializer = clazz.getClassInitializer();
+            if (initializer != null) {
+                initializer.instrument(cc);
+            }
+//                CtClass[] innerClasses = clazz.getNestedClasses();
+//                for (CtClass inner : innerClasses) {
+//                    transform(loader, inner.getName(), inner.getClass(),
+//                            protectionDomain, inner.toBytecode());
+//                }
+            // todo: inner classes?
+        }
+
         private static boolean needToBeTransformed(String className) {
             return !className.contains("Timeshifter: timeshifter");
+        }
+
+        private static void initCodeConverter()
+                throws NotFoundException, CannotCompileException {
+            if (!ccInitialized) {
+                synchronized (Transformer.class) {
+                    if (ccInitialized) {
+                        return;
+                    }
+                    CtClass jSystem = pool.get("java.lang.System");
+                    CtMethod jCurrentTime =
+                            jSystem.getDeclaredMethod("currentTimeMillis");
+                    CtClass mySystem =
+                            pool.get("timeshifter.ShiftedTimeSystem");
+                    CtMethod myCurrentTime =
+                            mySystem.getDeclaredMethod("currentTimeMillis");
+
+                    cc = new CodeConverter();
+                    cc.redirectMethodCall(jCurrentTime, myCurrentTime);
+                    ccInitialized = true;
+                }
+            }
         }
     }
 }

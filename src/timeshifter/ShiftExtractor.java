@@ -14,8 +14,8 @@ import java.util.Locale;
 
 public class ShiftExtractor {
 
-    private static volatile long lastModified = 0;
-    private static volatile long timeShift = 0;
+    private static volatile long lastModified;
+    private static volatile long timeShift;
 //    private static final Logger log =
 //            LoggerFactory.getLogger(ShiftExtractor.class);
     private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT =
@@ -29,10 +29,16 @@ public class ShiftExtractor {
     public static long getShift() {
         if ((lastModified > 0 && !MainClass.FILE.exists()) ||
                 lastModified < MainClass.FILE.lastModified()) {
-            if (MainClass.verbose) {
-                System.out.println("Timeshifter: File modification detected");
-            }
             synchronized (MainClass.FILE) {
+                if (((lastModified > 0 && !MainClass.FILE.exists()) ||
+                            lastModified < MainClass.FILE.lastModified())) {
+                    return timeShift;
+                }
+                if (MainClass.verbose) {
+//                    log.info("File modification detected");
+                    System.out.println(
+                           "Timeshifter: File modification detected");
+                }
                 if (MainClass.FILE.exists()) {
                     lastModified = MainClass.FILE.lastModified();
 
