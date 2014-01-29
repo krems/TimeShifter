@@ -50,6 +50,7 @@ public class ShiftExtractor {
     private static long readShiftFromFile() {
 //        log.info("Reading data from file {}",
 //                MainClass.FILE.getAbsolutePath());
+        System.out.println("Reading data from file " + MainClass.FILE.getAbsolutePath());
         long shift = 0;
         BufferedReader dateFile = null;
         try {
@@ -60,24 +61,32 @@ public class ShiftExtractor {
                 try {
                     Date date = DATE_FORMAT.get().parse(dateLine);
 //                    log.info("Loaded date from file: {}", date);
+                    System.out.println("Reading data from file " + date);
                     Calendar c = Calendar.getInstance();
                     c.setTime(date);
                     Calendar now = Calendar.getInstance();
                     shift = c.getTime().getTime() - now.getTime().getTime();
                 } catch (ParseException e) {
 //                    log.error("ParseException: ", e);
+                    System.out.println("ParseException: ");
+                    e.printStackTrace();
                 }
             } else {
 //                log.error("File is empty");
+                System.out.println("File is empty");
             }
         } catch (IOException e) {
 //            log.error("File read error: ", e);
+            System.out.println("File read error: ");
+            e.printStackTrace();
         } finally {
             if (dateFile != null) {
                 try {
                     dateFile.close();
                 } catch (IOException e) {
 //                    log.error("File Closing Error: ", e);
+                    System.out.println("File Closing Error: ");
+                    e.printStackTrace();
                 }
             }
         }

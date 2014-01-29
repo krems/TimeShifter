@@ -28,17 +28,21 @@ public class MainClass {
             throws Exception {
         if (args != null && args.length() > 0) {
 //            log.info("Using {} config from args", args);
+            System.out.println("Using config from args" + args);
             FILE = new File(args);
         } else {
 //            log.error("No arguments provided!");
+            System.out.println("No arguments provided!");
             return;
         }
 
         inst.addTransformer(new Transformer());
 //        log.info("Transformer added");
+        System.out.println("Transformer added");
 
         Class<?>[] loadedClasses = inst.getAllLoadedClasses();
 //        log.info("Already loaded {} classes", loadedClasses.length);
+        System.out.println("Already loaded " + loadedClasses.length + " classes");
         ArrayList<Class<?>> classList = new ArrayList<>(loadedClasses.length);
         for (Class<?> loadedClass : loadedClasses) {
             if (inst.isModifiableClass(loadedClass)) {
@@ -54,8 +58,11 @@ public class MainClass {
         } catch (UnmodifiableClassException e) {
 //            log.warn("AllocationInstrumenter was unable to retransform " +
 //                    "early loaded classes.");
+            System.out.println("AllocationInstrumenter was unable to retransform early loaded classes.");
         } catch (UnsupportedOperationException e) {
 //            log.warn("Retransform is not supported on current jvm", e);
+            System.out.println("Retransform is not supported on current jvm");
+            e.printStackTrace();
         }
     }
 
@@ -72,6 +79,7 @@ public class MainClass {
     public static void agentmain(String args, Instrumentation inst)
             throws Exception {
 //        log.info("agentmain called");
+        System.out.println("agentmain called");
         premain(args, inst);
     }
 
@@ -125,8 +133,11 @@ public class MainClass {
 
                 classfileBuffer = clazz.toBytecode();
 //                log.debug("Transformed class: {}", clazz.getName());
+                System.out.println("Transformed class: " + clazz.getName());
             } catch (Exception e) {
 //                log.error("Couldn't replace System.currentTimeMillis(): ", e);
+                System.out.println("Couldn't replace System.currentTimeMillis(): ");
+                e.printStackTrace();
             }
             return classfileBuffer;
         }
