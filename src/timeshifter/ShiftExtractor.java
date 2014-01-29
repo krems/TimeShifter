@@ -30,7 +30,7 @@ public class ShiftExtractor {
         if ((lastModified > 0 && !MainClass.FILE.exists()) ||
                 lastModified < MainClass.FILE.lastModified()) {
             if (MainClass.verbose) {
-                System.out.println("File modification detected");
+                System.out.println("Timeshifter: File modification detected");
             }
             synchronized (MainClass.FILE) {
                 if (MainClass.FILE.exists()) {
@@ -53,7 +53,7 @@ public class ShiftExtractor {
 //        log.info("Reading data from file {}",
 //                MainClass.FILE.getAbsolutePath());
         if (MainClass.verbose) {
-            System.out.println("Reading data from file " +
+            System.out.println("Timeshifter: Reading data from file " +
                     MainClass.FILE.getAbsolutePath());
         }
         long shift = 0;
@@ -67,7 +67,8 @@ public class ShiftExtractor {
                     Date date = DATE_FORMAT.get().parse(dateLine);
 //                    log.info("Loaded date from file: {}", date);
                     if (MainClass.verbose) {
-                        System.out.println("Reading data from file " + date);
+                        System.out.println(
+                                "Timeshifter: Reading data from file " + date);
                     }
                     Calendar c = Calendar.getInstance();
                     c.setTime(date);
@@ -75,16 +76,16 @@ public class ShiftExtractor {
                     shift = c.getTime().getTime() - now.getTime().getTime();
                 } catch (ParseException e) {
 //                    log.error("ParseException: ", e);
-                    System.out.println("ParseException: ");
+                    System.out.println("Timeshifter: ParseException: ");
                     e.printStackTrace();
                 }
             } else {
 //                log.error("File is empty");
-                System.out.println("File is empty");
+                System.out.println("Timeshifter: File is empty");
             }
         } catch (IOException e) {
 //            log.error("File read error: ", e);
-            System.out.println("File read error: ");
+            System.out.println("Timeshifter: File read error: ");
             e.printStackTrace();
         } finally {
             if (dateFile != null) {
@@ -92,7 +93,7 @@ public class ShiftExtractor {
                     dateFile.close();
                 } catch (IOException e) {
 //                    log.error("File Closing Error: ", e);
-                    System.out.println("File Closing Error: ");
+                    System.out.println("Timeshifter: File Closing Error: ");
                     e.printStackTrace();
                 }
             }
