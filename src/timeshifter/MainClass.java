@@ -29,7 +29,7 @@ public class MainClass {
             throws Exception {
         if (args != null && args.length() > 0) {
 //            log.info("Using {} config from args", args);
-            System.out.println("Timeshifter: Using config from args" + args);
+            System.out.println("Timeshifter: Using config from args " + args);
             CONF_FILE = new File(args);
         } else {
 //            log.error("No arguments provided!");
@@ -108,14 +108,14 @@ public class MainClass {
                 return null;
             }
             try {
-                initCodeConverter();
+                initCodeConverter(pool);
 
                 CtClass clazz = pool.makeClass(
                         new ByteArrayInputStream(classfileBuffer), false);
                 if (clazz.isFrozen()) {
                     return null;
                 }
-                instrumentClass(clazz);
+                instrumentClass(clazz, codeConverter);
                 classfileBuffer = clazz.toBytecode();
 //                log.debug("Transformed class: {}", clazz.getName());
                 if (verbose) {
@@ -131,7 +131,7 @@ public class MainClass {
             return classfileBuffer;
         }
 
-        private static void instrumentClass(CtClass clazz)
+        private static void instrumentClass(CtClass clazz, CodeConverter codeConverter)
                 throws CannotCompileException {
             CtConstructor[] constructors = clazz.getConstructors();
             for (CtConstructor constructor : constructors) {
@@ -154,10 +154,10 @@ public class MainClass {
         }
 
         private static boolean needToBeTransformed(String className) {
-            return !className.contains("timeshifter");
+            return !className.contains("timeshifter") && className.contains("util");
         }
 
-        private static void initCodeConverter()
+        private static void initCodeConverter(ClassPool pool)
                 throws NotFoundException, CannotCompileException {
             if (!ccInitialized) {
                 synchronized (Transformer.class) {

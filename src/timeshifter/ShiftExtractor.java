@@ -68,7 +68,6 @@ public class ShiftExtractor {
             dateFile = new BufferedReader(new FileReader(MainClass.CONF_FILE));
             String dateLine = dateFile.readLine();
             if (dateLine != null && !dateLine.trim().isEmpty()) {
-
                 try {
                     Date date = DATE_FORMAT.get().parse(dateLine);
 //                    log.info("Loaded date from file: {}", date);
@@ -105,7 +104,6 @@ public class ShiftExtractor {
                 }
             }
         }
-
         return shift;
     }
 }
