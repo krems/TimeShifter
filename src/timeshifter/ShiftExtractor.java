@@ -77,9 +77,11 @@ public class ShiftExtractor {
                     }
                     Calendar dateCal = Calendar.getInstance();
                     dateCal.setTime(date);
-                    Calendar now = Calendar.getInstance();
+                    Date now = new Date(System.currentTimeMillis());
+                    Calendar nowCal = Calendar.getInstance();
+                    nowCal.setTime(now);
                     shift = dateCal.getTime().getTime() -
-                            now.getTime().getTime();
+                            nowCal.getTime().getTime();
                 } catch (ParseException e) {
 //                    log.error("ParseException: ", e);
                     System.out.println("Timeshifter: ParseException: ");
