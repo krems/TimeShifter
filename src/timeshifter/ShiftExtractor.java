@@ -11,10 +11,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ShiftExtractor {
 
-    private static volatile long lastModified;
+    private static AtomicLong lastModified = new AtomicLong(0);
     private static volatile long timeShift;
 //    private static final Logger log =
 //            LoggerFactory.getLogger(ShiftExtractor.class);
@@ -27,28 +28,25 @@ public class ShiftExtractor {
             };
 
     public static long getShift() {
-        if ((lastModified > 0 && !MainClass.CONF_FILE.exists()) ||
-                lastModified < MainClass.CONF_FILE.lastModified()) {
-            synchronized (MainClass.CONF_FILE) {
-                if (lastModified > 0 && MainClass.CONF_FILE.exists() &&
-                          lastModified == MainClass.CONF_FILE.lastModified()) {
-                    return timeShift;
-                }
+        long lastModifiedOld = lastModified.get();
+        if (lastModifiedOld > 0 && !MainClass.CONF_FILE.exists()) {
+            lastModified.set(0);
+            timeShift = 0;
+            return timeShift;
+        }
+        if (lastModifiedOld < MainClass.CONF_FILE.lastModified()) {
+            // While current thread processing update the others can just work
+            // with the old timeShift value
+            if (lastModified.compareAndSet(lastModifiedOld,
+                    MainClass.CONF_FILE.lastModified())) {
                 if (MainClass.verbose) {
 //                    log.info("File modification detected");
                     System.out.println(
                            "Timeshifter: File modification detected");
                 }
-                if (MainClass.CONF_FILE.exists()) {
-                    lastModified = MainClass.CONF_FILE.lastModified();
-
-                    long newTime = readShiftFromFile();
-                    if (newTime > 0) {
-                        timeShift = newTime;
-                    }
-                } else {
-                    lastModified = 0;
-                    timeShift = 0;
+                long newTime = readShiftFromFile();
+                if (newTime > 0) {
+                    timeShift = newTime;
                 }
             }
         }

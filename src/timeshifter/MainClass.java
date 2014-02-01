@@ -12,6 +12,8 @@ import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * some sources are copied from ru.javaorca and boiler
@@ -94,8 +96,10 @@ public class MainClass {
     private static class Transformer implements ClassFileTransformer {
 
         private static final ClassPool pool = ClassPool.getDefault();
-        private static volatile CodeConverter codeConverter;
-        private static volatile boolean ccInitialized;
+        private static final AtomicBoolean ccInitialized = new AtomicBoolean(false);
+        private static final CountDownLatch initializedLatch = new CountDownLatch(1);
+
+        private static volatile CodeConverter codeConverter;    // todo: or mb threadlocal?
 
         @Override
         public byte[] transform(ClassLoader loader,
@@ -109,6 +113,7 @@ public class MainClass {
             }
             try {
                 initCodeConverter();
+                initializedLatch.await();
 
                 CtClass clazz = pool.makeClass(
                         new ByteArrayInputStream(classfileBuffer), false);
@@ -159,24 +164,19 @@ public class MainClass {
 
         private static void initCodeConverter()
                 throws NotFoundException, CannotCompileException {
-            if (!ccInitialized) {
-                synchronized (Transformer.class) {
-                    if (ccInitialized) {
-                        return;
-                    }
-                    CtClass jSystem = pool.get("java.lang.System");
-                    CtMethod jCurrentTime =
-                            jSystem.getDeclaredMethod("currentTimeMillis");
-                    CtClass mySystem =
-                            pool.get("timeshifter.ShiftedTimeSystem");
-                    CtMethod myCurrentTime =
-                            mySystem.getDeclaredMethod("currentTimeMillis");
+            if (ccInitialized.compareAndSet(false, true)) {
+                CtClass jSystem = pool.get("java.lang.System");
+                CtMethod jCurrentTime =
+                        jSystem.getDeclaredMethod("currentTimeMillis");
+                CtClass mySystem =
+                        pool.get("timeshifter.ShiftedTimeSystem");
+                CtMethod myCurrentTime =
+                        mySystem.getDeclaredMethod("currentTimeMillis");
 
-                    codeConverter = new CodeConverter();
-                    codeConverter.redirectMethodCall(jCurrentTime,
-                            myCurrentTime);
-                    ccInitialized = true;
-                }
+                codeConverter = new CodeConverter();
+                codeConverter.redirectMethodCall(jCurrentTime,
+                        myCurrentTime);
+                initializedLatch.countDown();
             }
         }
     }
