@@ -6,200 +6,7 @@
   <component name="EntryPointsManager">
     <entry_points version="2.0" />
   </component>
-  <component name="GradleLocalSettings">
-    <option name="availableTasks">
-      <set>
-        <GradleTaskDescriptor>
-          <option name="description" value="Assembles all Jar, War, Zip, and Tar archives." />
-          <option name="name" value="assemble" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Assembles and tests this project." />
-          <option name="name" value="build" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="buildApplicationDir" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Assembles and tests this project and all projects that depend on it." />
-          <option name="name" value="buildDependents" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="buildInstaller" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Assembles and tests this project and all projects it depends on." />
-          <option name="name" value="buildNeeded" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Runs all checks." />
-          <option name="name" value="check" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="checkEnvironment" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Run Checkstyle analysis for ear classes" />
-          <option name="name" value="checkstyleEar" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Run Checkstyle analysis for ejb classes" />
-          <option name="name" value="checkstyleEjb" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Run Checkstyle analysis for main classes" />
-          <option name="name" value="checkstyleMain" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Run Checkstyle analysis for test classes" />
-          <option name="name" value="checkstyleTest" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Assembles the main classes." />
-          <option name="name" value="classes" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Deletes the build directory." />
-          <option name="name" value="clean" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Deletes the entire local maven .m2 cache." />
-          <option name="name" value="clearLocalRepo" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Compiles the ear Java source." />
-          <option name="name" value="compileEarJava" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Compiles the ejb Java source." />
-          <option name="name" value="compileEjbJava" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Compiles the main Java source." />
-          <option name="name" value="compileJava" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Compiles the test Java source." />
-          <option name="name" value="compileTestJava" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="deleteGitHook" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="deploy" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="deployFast" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Assembles the ear classes." />
-          <option name="name" value="earClasses" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="earJar" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Assembles the ejb classes." />
-          <option name="name" value="ejbClasses" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="ejbJar" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="generateDependenciesFile" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="generateImporter" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="generateInteractionItemId" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="generateScripts" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="getCodeQualityConfigs" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Does a maven install of the archives artifacts into the local .m2 cache." />
-          <option name="name" value="install" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="installGitHook" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Assembles a jar archive containing the main classes." />
-          <option name="name" value="jar" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Generates Javadoc API documentation for the main source code." />
-          <option name="name" value="javadoc" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Run PMD analysis for ear classes" />
-          <option name="name" value="pmdEar" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Run PMD analysis for ejb classes" />
-          <option name="name" value="pmdEjb" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Run PMD analysis for main classes" />
-          <option name="name" value="pmdMain" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Run PMD analysis for test classes" />
-          <option name="name" value="pmdTest" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Processes the ear resources." />
-          <option name="name" value="processEarResources" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Processes the ejb resources." />
-          <option name="name" value="processEjbResources" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Processes the main resources." />
-          <option name="name" value="processResources" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Processes the test resources." />
-          <option name="name" value="processTestResources" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="sonarAnalyze" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Runs the unit tests." />
-          <option name="name" value="test" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Assembles the test classes." />
-          <option name="name" value="testClasses" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="testJar" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="description" value="Uploads all artifacts belonging to configuration ':archives'" />
-          <option name="name" value="uploadArchives" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="wrapper" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="zipImporter" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="zipInstaller" />
-        </GradleTaskDescriptor>
-        <GradleTaskDescriptor>
-          <option name="name" value="zipServer" />
-        </GradleTaskDescriptor>
-      </set>
-    </option>
-  </component>
+  <component name="IdProvider" IDEtalkID="F0AE038444B1F9984BF1527F2571DF84" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
     <OptionsSetting value="true" id="Remove" />
@@ -210,13 +17,13 @@
     <ConfirmationsSetting value="0" id="Add" />
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.6" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_6" assert-keyword="true" jdk-15="true" project-jdk-name="1.7" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="RunManager">
-    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin" singleton="true">
+    <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="" />
-      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m" />
+      <option name="VM_PARAMETERS" value="-Xmx512m -Xms256m -XX:MaxPermSize=250m -ea" />
       <option name="PROGRAM_PARAMETERS" />
       <method />
     </configuration>
@@ -228,20 +35,8 @@
       <option name="PORT" value="5005" />
       <method />
     </configuration>
-    <configuration default="true" type="Applet" factoryName="Applet">
-      <module name="" />
-      <option name="MAIN_CLASS_NAME" />
-      <option name="HTML_FILE_NAME" />
-      <option name="HTML_USED" value="false" />
-      <option name="WIDTH" value="400" />
-      <option name="HEIGHT" value="300" />
-      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
-      <option name="VM_PARAMETERS" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
-      <option name="ALTERNATIVE_JRE_PATH" />
-      <method />
-    </configuration>
     <configuration default="true" type="TestNG" factoryName="TestNG">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -268,7 +63,21 @@
       <listeners />
       <method />
     </configuration>
+    <configuration default="true" type="Applet" factoryName="Applet">
+      <module name="" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="HTML_FILE_NAME" />
+      <option name="HTML_USED" value="false" />
+      <option name="WIDTH" value="400" />
+      <option name="HEIGHT" value="300" />
+      <option name="POLICY_FILE" value="$APPLICATION_HOME_DIR$/bin/appletviewer.policy" />
+      <option name="VM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <method />
+    </configuration>
     <configuration default="true" type="Application" factoryName="Application">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <option name="MAIN_CLASS_NAME" />
       <option name="VM_PARAMETERS" />
       <option name="PROGRAM_PARAMETERS" />
@@ -283,6 +92,7 @@
       <method />
     </configuration>
     <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
       <option name="ALTERNATIVE_JRE_PATH" />
@@ -307,22 +117,6 @@
       <Host>localhost</Host>
       <Port>5050</Port>
     </configuration>
-  </component>
-  <component name="masterDetails">
-    <states>
-      <state key="ProjectJDKs.UI">
-        <settings>
-          <last-edited>1.6</last-edited>
-          <splitter-proportions>
-            <option name="proportions">
-              <list>
-                <option value="0.20000002" />
-              </list>
-            </option>
-          </splitter-proportions>
-        </settings>
-      </state>
-    </states>
   </component>
 </project>
 
