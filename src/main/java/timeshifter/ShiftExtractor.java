@@ -10,7 +10,11 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class ShiftExtractor {
+/**
+ * Class that calculates shift value to be used in time shifting.
+ * Shift value is specified in new_date.conf file.
+ */
+class ShiftExtractor {
 
     private static AtomicLong lastModified = new AtomicLong(0);
     private static volatile long timeShift;
@@ -22,6 +26,10 @@ public class ShiftExtractor {
                 }
             };
 
+    /**
+     * Returns shift in millis. Checks if file new_date.conf was modified and reloads new shift value from it.
+     * @return time shift in millis
+     */
     public static long getShiftMillis() {
         long lastModifiedOld = lastModified.get();
         if (lastModifiedOld > 0 && !MainClass.CONF_FILE.exists()) {

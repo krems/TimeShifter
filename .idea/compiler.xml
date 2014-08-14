@@ -25,6 +25,9 @@
         <module name="TimeShifter" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="TimeShifter" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
 </project>
 

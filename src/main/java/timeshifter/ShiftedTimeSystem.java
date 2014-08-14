@@ -1,5 +1,8 @@
 package timeshifter;
 
+/**
+ * Class, containing methods to replace standard java.lang.System methods
+ */
 public class ShiftedTimeSystem {
     public static long currentTimeMillis() {
         if (MainClass.verbose) {

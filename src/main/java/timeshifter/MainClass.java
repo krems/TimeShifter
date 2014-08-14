@@ -4,17 +4,25 @@ import javassist.*;
 
 import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 
+/**
+ * TimeShifter entry point class. Initializes instrumentation and transformation tools, instrument classes.
+ * Entry method is premain, which runs right before the main method of java application.
+ */
 public class MainClass {
 
     public static volatile File CONF_FILE;
     public static final String FORMAT = "dd.MM.yyyy HH:mm:ss";
     public static boolean verbose = true;
+
+    private static final String SYSTEM = "java.lang.System";
+    private static final String CURRENT_MILLIS = "currentTimeMillis";
+    private static final String NANO_TIME = "nanoTime";
+    private static final String TIMESHIFTER = "timeshifter.ShiftedTimeSystem";
 
     public static void premain(String args, Instrumentation inst) throws Exception {
         if (args != null && args.length() > 0) {
@@ -59,10 +67,6 @@ public class MainClass {
      *
      * The agent class may have an agentmain method for use when the agent is
      * started after VM startup.
-     *
-     * @param args
-     * @param inst
-     * @throws Exception
      */
     public static void agentmain(String args, Instrumentation inst) throws Exception {
         System.out.println("Timeshifter: agentmain called");
@@ -74,12 +78,12 @@ public class MainClass {
         private static volatile CodeConverter codeConverter;
         static {
             try {
-                CtClass jSystem = pool.get("java.lang.System");
-                CtMethod jCurrentTimeMillis = jSystem.getDeclaredMethod("currentTimeMillis");
-                CtMethod jCurrentTimeNanos = jSystem.getDeclaredMethod("nanoTime");
-                CtClass mySystem = pool.get("timeshifter.ShiftedTimeSystem");
-                CtMethod myCurrentTimeMillis = mySystem.getDeclaredMethod("currentTimeMillis");
-                CtMethod myCurrentTimeNanos = mySystem.getDeclaredMethod("nanoTime");
+                CtClass jSystem = pool.get(SYSTEM);
+                CtMethod jCurrentTimeMillis = jSystem.getDeclaredMethod(CURRENT_MILLIS);
+                CtMethod jCurrentTimeNanos = jSystem.getDeclaredMethod(NANO_TIME);
+                CtClass mySystem = pool.get(TIMESHIFTER);
+                CtMethod myCurrentTimeMillis = mySystem.getDeclaredMethod(CURRENT_MILLIS);
+                CtMethod myCurrentTimeNanos = mySystem.getDeclaredMethod(NANO_TIME);
 
                 codeConverter = new CodeConverter();
                 codeConverter.redirectMethodCall(jCurrentTimeMillis, myCurrentTimeMillis);
@@ -90,10 +94,18 @@ public class MainClass {
             }
         }
 
+        /**
+         * Transforms class, replacing calls to java.lang.System#currentTimeMillis and java.lang.System#nanoTime
+         * @param loader classloader used to load class to be transformed
+         * @param className name of class to be transformed
+         * @param classBeingRedefined class to be transformed
+         * @param protectionDomain unused
+         * @param classfileBuffer bytes of class to be transformed
+         * @return transformed class bytes
+         */
         @Override
         public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
-                                ProtectionDomain protectionDomain, byte[] classfileBuffer)
-                throws IllegalClassFormatException {
+                                ProtectionDomain protectionDomain, byte[] classfileBuffer) {
             if (!needToBeTransformed(className)) {
                 return null;
             }
