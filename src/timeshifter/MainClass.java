@@ -1,10 +1,7 @@
 package timeshifter;
 
 import javassist.*;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -12,35 +9,23 @@ import java.lang.instrument.Instrumentation;
 import java.lang.instrument.UnmodifiableClassException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-/**
- * some sources are copied from ru.javaorca and boiler
- */
 public class MainClass {
 
     public static volatile File CONF_FILE;
     public static final String FORMAT = "dd.MM.yyyy HH:mm:ss";
     public static boolean verbose = true;
 
-//    private final static Logger log =
-//            LoggerFactory.getLogger(MainClass.class);
-
-    public static void premain(String args, Instrumentation inst)
-            throws Exception {
+    public static void premain(String args, Instrumentation inst) throws Exception {
         if (args != null && args.length() > 0) {
-//            log.info("Using {} config from args", args);
             System.out.println("Timeshifter: Using config from args" + args);
             CONF_FILE = new File(args);
         } else {
-//            log.error("No arguments provided!");
             System.out.println("Timeshifter: No arguments provided!");
             return;
         }
 
         inst.addTransformer(new Transformer());
-//        log.info("Transformer added");
         System.out.println("Timeshifter: Transformer added");
 
         tryToReload(inst);
@@ -48,10 +33,8 @@ public class MainClass {
 
     private static void tryToReload(Instrumentation inst) {
         Class<?>[] loadedClasses = inst.getAllLoadedClasses();
-//        log.info("Already loaded {} classes", loadedClasses.length);
         if (verbose) {
-            System.out.println("Timeshifter: Already loaded " +
-                    loadedClasses.length + " classes");
+            System.out.println("Timeshifter: Already loaded " + loadedClasses.length + " classes");
         }
         ArrayList<Class<?>> classList = new ArrayList<>(loadedClasses.length);
         for (Class<?> loadedClass : loadedClasses) {
@@ -64,14 +47,9 @@ public class MainClass {
         try {
             inst.retransformClasses(toRetransform);
         } catch (UnmodifiableClassException e) {
-//            log.warn("AllocationInstrumenter was unable to retransform " +
-//                    "early loaded classes.");
-            System.out.println("Timeshifter: AllocationInstrumenter was " +
-                    "unable to retransform early loaded classes.");
+            System.out.println("Timeshifter: AllocationInstrumenter was unable to retransform early loaded classes.");
         } catch (UnsupportedOperationException e) {
-//            log.warn("Retransform is not supported on current jvm", e);
-            System.out.println("Timeshifter: Retransform is not supported " +
-                    "on current jvm");
+            System.out.println("Timeshifter: Retransform is not supported on current jvm");
             e.printStackTrace();
         }
     }
@@ -86,58 +64,57 @@ public class MainClass {
      * @param inst
      * @throws Exception
      */
-    public static void agentmain(String args, Instrumentation inst)
-            throws Exception {
-//        log.info("agentmain called");
+    public static void agentmain(String args, Instrumentation inst) throws Exception {
         System.out.println("Timeshifter: agentmain called");
         premain(args, inst);
     }
 
     private static class Transformer implements ClassFileTransformer {
-
         private static final ClassPool pool = ClassPool.getDefault();
-        private static final AtomicBoolean ccInitialized = new AtomicBoolean(false);
-        private static final CountDownLatch initializedLatch = new CountDownLatch(1);
+        private static volatile CodeConverter codeConverter;
+        static {
+            try {
+                CtClass jSystem = pool.get("java.lang.System");
+                CtMethod jCurrentTimeMillis = jSystem.getDeclaredMethod("currentTimeMillis");
+                CtMethod jCurrentTimeNanos = jSystem.getDeclaredMethod("nanoTime");
+                CtClass mySystem = pool.get("timeshifter.ShiftedTimeSystem");
+                CtMethod myCurrentTimeMillis = mySystem.getDeclaredMethod("currentTimeMillis");
+                CtMethod myCurrentTimeNanos = mySystem.getDeclaredMethod("nanoTime");
 
-        private static volatile CodeConverter codeConverter;    // todo: or mb threadlocal?
+                codeConverter = new CodeConverter();
+                codeConverter.redirectMethodCall(jCurrentTimeMillis, myCurrentTimeMillis);
+                codeConverter.redirectMethodCall(jCurrentTimeNanos, myCurrentTimeNanos);
+            } catch (Exception e) {
+                System.out.println("Timeshifter: Couldn't replace System.currentTimeMillis(): ");
+                e.printStackTrace();
+            }
+        }
 
         @Override
-        public byte[] transform(ClassLoader loader,
-                                String className,
-                                Class<?> classBeingRedefined,
-                                ProtectionDomain protectionDomain,
-                                byte[] classfileBuffer)
+        public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined,
+                                ProtectionDomain protectionDomain, byte[] classfileBuffer)
                 throws IllegalClassFormatException {
             if (!needToBeTransformed(className)) {
                 return null;
             }
             try {
-                initCodeConverter();
-                initializedLatch.await();
-
-                CtClass clazz = pool.makeClass(
-                        new ByteArrayInputStream(classfileBuffer), false);
+                CtClass clazz = pool.makeClass(className);
                 if (clazz.isFrozen()) {
                     return null;
                 }
                 instrumentClass(clazz);
                 classfileBuffer = clazz.toBytecode();
-//                log.debug("Transformed class: {}", clazz.getName());
                 if (verbose) {
-                    System.out.println("Timeshifter: Transformed class: " +
-                            clazz.getName());
+                    System.out.println("Timeshifter: Transformed class: " + clazz.getName());
                 }
             } catch (Exception e) {
-//                log.error("Couldn't replace System.currentTimeMillis(): ", e);
-                System.out.println("Timeshifter: Couldn't replace " +
-                        "System.currentTimeMillis(): ");
+                System.out.println("Timeshifter: Couldn't replace System.currentTimeMillis(): ");
                 e.printStackTrace();
             }
             return classfileBuffer;
         }
 
-        private static void instrumentClass(CtClass clazz)
-                throws CannotCompileException {
+        private static void instrumentClass(CtClass clazz) throws CannotCompileException {
             CtConstructor[] constructors = clazz.getConstructors();
             for (CtConstructor constructor : constructors) {
                 constructor.instrument(codeConverter);
@@ -160,24 +137,6 @@ public class MainClass {
 
         private static boolean needToBeTransformed(String className) {
             return !className.contains("timeshifter");
-        }
-
-        private static void initCodeConverter()
-                throws NotFoundException, CannotCompileException {
-            if (ccInitialized.compareAndSet(false, true)) {
-                CtClass jSystem = pool.get("java.lang.System");
-                CtMethod jCurrentTime =
-                        jSystem.getDeclaredMethod("currentTimeMillis");
-                CtClass mySystem =
-                        pool.get("timeshifter.ShiftedTimeSystem");
-                CtMethod myCurrentTime =
-                        mySystem.getDeclaredMethod("currentTimeMillis");
-
-                codeConverter = new CodeConverter();
-                codeConverter.redirectMethodCall(jCurrentTime,
-                        myCurrentTime);
-                initializedLatch.countDown();
-            }
         }
     }
 }
