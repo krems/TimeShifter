@@ -1,6 +1,6 @@
-out/*
+out
 *.iml
 *.ipr
 *.iws
-classes/*
-.idea/*
+classes
+.idea
