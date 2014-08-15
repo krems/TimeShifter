@@ -4,7 +4,7 @@
         unzip -oq timeshifter.zip
 
 3. Add 
-        -Xbootclasspath/p:timeshifter/timeshifter.jar:timeshifter/lib/javassist.jar -javaagent:timeshifter/timeshifter.jar=timeshifter/new_date.conf
+        -Xbootclasspath/p:timeshifter/timeshifter.jar:timeshifter/lib/javassist.jar:timeshifter/lib/slf4j-api.jar:timeshifter/lib/slf4j-simple.jar -javaagent:timeshifter/timeshifter.jar=timeshifter/new_date.conf
 option to jvm arguments (it MUST be the first javaagent in jvm arguments)
 
 4. To change current date set desired date and time in
