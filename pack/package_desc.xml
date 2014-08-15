@@ -7,7 +7,7 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <files>
         <file>
-            <source>target/TimeShifter-1.1-BETA.jar</source>
+            <source>target/timeshifter.jar</source>
             <outputDirectory>timeshifter/</outputDirectory>
         </file>
         <file>

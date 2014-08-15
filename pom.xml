@@ -43,6 +43,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
+                    <finalName>timeshifter</finalName>
                     <archive>
                         <manifestFile>src/META-INF/MANIFEST.MF</manifestFile>
                     </archive>

@@ -26,7 +26,7 @@ public class MainClass {
 
     public static void premain(String args, Instrumentation inst) throws Exception {
         if (args != null && args.length() > 0) {
-            System.out.println("Timeshifter: Using config from args" + args);
+            System.out.println("Timeshifter: Using config from args " + args);
             CONF_FILE = new File(args);
         } else {
             System.out.println("Timeshifter: No arguments provided!");
