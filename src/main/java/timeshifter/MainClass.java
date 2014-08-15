@@ -1,6 +1,8 @@
 package timeshifter;
 
 import javassist.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
@@ -24,16 +26,21 @@ public class MainClass {
     private static final String NANO_TIME = "nanoTime";
     private static final String TIMESHIFTER = "timeshifter.ShiftedTimeSystem";
 
+        private final static Logger log = LoggerFactory.getLogger(MainClass.class);
+
     public static void premain(String args, Instrumentation inst) throws Exception {
         if (args != null && args.length() > 0) {
+            log.info("Using {} config from args", args);
             System.out.println("Timeshifter: Using config from args" + args);
             CONF_FILE = new File(args);
         } else {
+            log.error("No arguments provided!");
             System.out.println("Timeshifter: No arguments provided!");
             return;
         }
 
         inst.addTransformer(new Transformer());
+        log.info("Transformer added");
         System.out.println("Timeshifter: Transformer added");
 
         tryToReload(inst);
@@ -41,6 +48,7 @@ public class MainClass {
 
     private static void tryToReload(Instrumentation inst) {
         Class<?>[] loadedClasses = inst.getAllLoadedClasses();
+        log.info("Already loaded {} classes", loadedClasses.length);
         if (verbose) {
             System.out.println("Timeshifter: Already loaded " + loadedClasses.length + " classes");
         }
@@ -55,8 +63,10 @@ public class MainClass {
         try {
             inst.retransformClasses(toRetransform);
         } catch (UnmodifiableClassException e) {
+            log.warn("AllocationInstrumenter was unable to retransform early loaded classes.");
             System.out.println("Timeshifter: AllocationInstrumenter was unable to retransform early loaded classes.");
         } catch (UnsupportedOperationException e) {
+            log.warn("Retransform is not supported on current jvm", e);
             System.out.println("Timeshifter: Retransform is not supported on current jvm");
             e.printStackTrace();
         }
@@ -69,6 +79,7 @@ public class MainClass {
      * started after VM startup.
      */
     public static void agentmain(String args, Instrumentation inst) throws Exception {
+        log.info("agentmain called");
         System.out.println("Timeshifter: agentmain called");
         premain(args, inst);
     }
@@ -116,6 +127,7 @@ public class MainClass {
                 }
                 instrumentClass(clazz);
                 classfileBuffer = clazz.toBytecode();
+                log.debug("Transformed class: {}", clazz.getName());
                 if (verbose) {
                     System.out.println("Timeshifter: Transformed class: " + clazz.getName());
                 }
