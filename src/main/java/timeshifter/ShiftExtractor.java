@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicLong;
@@ -44,9 +43,9 @@ class ShiftExtractor {
                 if (MainClass.verbose) {
                     System.out.println("Timeshifter: File modification detected");
                 }
-                long newTime = readShiftFromFile();
-                if (newTime > 0) {
-                    timeShift = newTime;
+                timeShift = readShiftFromFile();
+                if (MainClass.verbose) {
+                    System.out.println("Timeshifter: New shift = " + timeShift);
                 }
             }
         }
@@ -57,7 +56,6 @@ class ShiftExtractor {
         if (MainClass.verbose) {
             System.out.println("Timeshifter: Reading data from file " + MainClass.CONF_FILE.getAbsolutePath());
         }
-        long shift = 0;
         BufferedReader dateFile = null;
         try {
             dateFile = new BufferedReader(new FileReader(MainClass.CONF_FILE));
@@ -66,12 +64,9 @@ class ShiftExtractor {
                 try {
                     Date date = DATE_FORMAT.get().parse(dateLine);
                     if (MainClass.verbose) {
-                        System.out.println("Timeshifter: Reading data from file " + date);
+                        System.out.println("Timeshifter: Date from file: " + date);
                     }
-                    Calendar dateCal = Calendar.getInstance();
-                    dateCal.setTime(date);
-                    Calendar now = Calendar.getInstance();
-                    shift = dateCal.getTime().getTime() - now.getTime().getTime();
+                    return date.getTime() - System.currentTimeMillis();
                 } catch (ParseException e) {
                     System.out.println("Timeshifter: ParseException: ");
                     e.printStackTrace();
@@ -92,6 +87,6 @@ class ShiftExtractor {
                 }
             }
         }
-        return shift;
+        return 0;
     }
 }

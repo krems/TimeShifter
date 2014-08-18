@@ -2,6 +2,7 @@ package timeshifter;
 
 import javassist.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
@@ -30,7 +31,7 @@ public class MainClass {
             CONF_FILE = new File(args);
         } else {
             System.out.println("Timeshifter: No arguments provided!");
-            return;
+            System.exit(-1);
         }
 
         inst.addTransformer(new Transformer());
@@ -58,7 +59,9 @@ public class MainClass {
             System.out.println("Timeshifter: AllocationInstrumenter was unable to retransform early loaded classes.");
         } catch (UnsupportedOperationException e) {
             System.out.println("Timeshifter: Retransform is not supported on current jvm");
-            e.printStackTrace();
+            if (verbose) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -75,8 +78,9 @@ public class MainClass {
 
     private static class Transformer implements ClassFileTransformer {
         private static final ClassPool pool = ClassPool.getDefault();
-        private static volatile CodeConverter codeConverter;
+        private static final CodeConverter codeConverter;
         static {
+            codeConverter = new CodeConverter();
             try {
                 CtClass jSystem = pool.get(SYSTEM);
                 CtMethod jCurrentTimeMillis = jSystem.getDeclaredMethod(CURRENT_MILLIS);
@@ -85,12 +89,12 @@ public class MainClass {
                 CtMethod myCurrentTimeMillis = mySystem.getDeclaredMethod(CURRENT_MILLIS);
                 CtMethod myCurrentTimeNanos = mySystem.getDeclaredMethod(NANO_TIME);
 
-                codeConverter = new CodeConverter();
                 codeConverter.redirectMethodCall(jCurrentTimeMillis, myCurrentTimeMillis);
                 codeConverter.redirectMethodCall(jCurrentTimeNanos, myCurrentTimeNanos);
             } catch (Exception e) {
                 System.out.println("Timeshifter: Couldn't replace System.currentTimeMillis(): ");
                 e.printStackTrace();
+                System.exit(-2);
             }
         }
 
@@ -110,7 +114,7 @@ public class MainClass {
                 return null;
             }
             try {
-                CtClass clazz = pool.makeClass(className);
+                CtClass clazz = pool.makeClass(new ByteArrayInputStream(classfileBuffer));
                 if (clazz.isFrozen()) {
                     return null;
                 }
